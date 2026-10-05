@@ -1,37 +1,40 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 
-export default function CheckoutPage() {
+// This route is dynamic because cookies() reads request-specific checkout data.
+export const dynamic = "force-dynamic";
+
+export default async function CheckoutPage() {
+  const cookieStore = await cookies();
+  const customerName = cookieStore.get("customer-name")?.value ?? "";
+
   return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <h1 className="text-4xl font-black">Checkout</h1>
-        <div className="flex gap-3 text-sm font-medium text-stone-700">
-          <Link href="/" className="hover:text-stone-950">Home</Link>
-          <Link href="/menu" className="hover:text-stone-950">Menu</Link>
-          <Link href="/cart" className="hover:text-stone-950">Cart</Link>
-        </div>
-      </div>
+    <main>
+      <h1>Checkout</h1>
+      <nav aria-label="Checkout navigation">
+        <Link href="/">Home</Link>
+        <Link href="/menu">Menu</Link>
+        <Link href="/cart">Cart</Link>
+      </nav>
 
-      <form className="mt-8 space-y-6 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200">
+      <form>
         <div>
-          <label className="mb-2 block text-sm font-medium text-stone-700">Full name</label>
-          <input className="w-full rounded-xl border border-stone-300 px-4 py-3" defaultValue="Amina Bekele" />
+          <label htmlFor="customer-name">Full name</label>
+          <input id="customer-name" name="customerName" defaultValue={customerName} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-medium text-stone-700">Delivery address</label>
-          <textarea className="w-full rounded-xl border border-stone-300 px-4 py-3" defaultValue="123 Bole Road, Addis Ababa" rows={4} />
+          <label htmlFor="delivery-address">Delivery address</label>
+          <textarea id="delivery-address" name="deliveryAddress" defaultValue="123 Bole Road, Addis Ababa" rows={4} />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-medium text-stone-700">Payment method</label>
-          <select className="w-full rounded-xl border border-stone-300 px-4 py-3">
+          <label htmlFor="payment-method">Payment method</label>
+          <select id="payment-method" name="paymentMethod">
             <option>Cash on delivery</option>
             <option>Card</option>
             <option>Mobile money</option>
           </select>
         </div>
-        <button type="submit" className="rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-white">
-          Place order
-        </button>
+        <button type="submit">Place order</button>
       </form>
     </main>
   );
