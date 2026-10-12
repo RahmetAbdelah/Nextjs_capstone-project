@@ -2,13 +2,13 @@ import CategoryBar from "./CategoryBar";
 
 export default function MenuLayout({ children }) {
   return (
-    <div>
-      <aside>
+    <div className="menu-layout">
+      <aside className="menu-sidebar">
         <p>Addis Eats</p>
         <h2>Explore the menu</h2>
         <CategoryBar />
       </aside>
-      <section>{children}</section>
+      <section className="menu-content">{children}</section>
     </div>
   );
 }

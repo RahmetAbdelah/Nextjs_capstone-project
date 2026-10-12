@@ -1,0 +1,184 @@
+:root {
+	color-scheme: light;
+	--ink: #29231f;
+	--muted: #71675f;
+	--paper: #fffaf2;
+	--tomato: #a83a24;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: var(--paper);
+	color: var(--ink);
+	font-family: Arial, Helvetica, sans-serif;
+	line-height: 1.6;
+}
+
+a {
+	color: var(--tomato);
+}
+
+header,
+footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1rem max(1.25rem, calc((100% - 70rem) / 2));
+	background: #fff;
+}
+
+header > a {
+	font-size: 1.3rem;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+header nav,
+main nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+main {
+	width: min(70rem, calc(100% - 2.5rem));
+	min-height: 65vh;
+	margin: 2rem auto;
+}
+
+footer {
+	display: block;
+	margin-top: 3rem;
+	color: var(--muted);
+}
+
+footer p {
+	margin: 0.25rem 0;
+}
+
+button,
+input,
+textarea,
+select {
+	font: inherit;
+}
+
+button {
+	padding: 0.55rem 0.85rem;
+	border: 1px solid var(--tomato);
+	border-radius: 0.4rem;
+	background: #fff;
+	color: var(--tomato);
+	cursor: pointer;
+}
+
+button[aria-pressed="true"] {
+	background: var(--tomato);
+	color: #fff;
+}
+
+.menu-layout {
+	display: grid;
+	grid-template-columns: 14rem minmax(0, 1fr);
+	gap: 2rem;
+	width: min(70rem, calc(100% - 2.5rem));
+	min-height: 65vh;
+	margin: 2rem auto;
+}
+
+.menu-sidebar {
+	padding: 1.25rem;
+	border-radius: 0.75rem;
+	background: #f5e9d5;
+}
+
+.menu-sidebar p {
+	margin-top: 0;
+	color: var(--muted);
+}
+
+.menu-sidebar nav {
+	display: grid;
+	gap: 0.65rem;
+}
+
+.menu-content main {
+	width: 100%;
+	margin: 0;
+}
+
+fieldset {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 1.5rem 0;
+	padding: 1rem;
+	border: 1px solid #dfd2c1;
+	border-radius: 0.6rem;
+}
+
+ul {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	gap: 1rem;
+	padding: 0;
+	list-style: none;
+}
+
+li {
+	padding: 1rem;
+	border: 1px solid #eadfce;
+	border-radius: 0.75rem;
+	background: #fff;
+}
+
+li a {
+	text-decoration: none;
+}
+
+li h2 {
+	margin-top: 0;
+}
+
+.filter-shell[data-filter="stew"] [data-category]:not([data-category="stew"]),
+.filter-shell[data-filter="meat"] [data-category]:not([data-category="meat"]),
+.filter-shell[data-filter="vegetarian"] [data-category]:not([data-category="vegetarian"]),
+.filter-shell[data-filter="side"] [data-category]:not([data-category="side"]) {
+	display: none;
+}
+
+form {
+	display: grid;
+	max-width: 34rem;
+	gap: 1rem;
+}
+
+form label {
+	display: block;
+	font-weight: 700;
+}
+
+form input,
+form textarea,
+form select {
+	width: 100%;
+	padding: 0.6rem;
+	border: 1px solid #b9aa98;
+	border-radius: 0.4rem;
+}
+
+@media (max-width: 650px) {
+	header {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.menu-layout {
+		grid-template-columns: 1fr;
+	}
+}

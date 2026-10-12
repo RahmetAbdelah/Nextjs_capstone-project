@@ -1,18 +1,30 @@
 import FilterShell from "./FilterShell";
 import DishList from "./DishList";
 import { getMenuItems } from "./menu-data";
+import { Suspense } from "react";
 
 export const revalidate = 3600;
 
-export default async function MenuPage() {
-  const dishes = await getMenuItems();
+async function MenuDishes({ dishesPromise }) {
+  const dishes = await dishesPromise;
 
   return (
-    <main>
+    <FilterShell>
+      <DishList dishes={dishes} />
+    </FilterShell>
+  );
+}
+
+export default async function MenuPage() {
+  // Await inside the Suspense boundary so the shared menu sidebar can stream first.
+  const dishesPromise = getMenuItems();
+
+  return (
+    <main className="menu-page">
       <h1>Our menu</h1>
-      <FilterShell>
-        <DishList dishes={dishes} />
-      </FilterShell>
+      <Suspense fallback={<p role="status">Loading menu dishes…</p>}>
+        <MenuDishes dishesPromise={dishesPromise} />
+      </Suspense>
     </main>
   );
 }
