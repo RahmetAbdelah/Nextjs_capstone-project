@@ -19,10 +19,10 @@ Lighthouse was run against the production menu after optimization and attempted 
 | Lighthouse audit (mobile simulated throttling) | Before | After |
 |---|---|---|
 | LCP | Not applicable (no numeric result) | Not applicable (no numeric result) |
-| CLS | Audit error (`NO_NAVSTART`) | 0.000 (numeric audit) |
+| CLS | 0.000 (numeric audit) | 0.000 (numeric audit) |
 | INP | Not applicable (no numeric result) | Not applicable (no numeric result) |
 
-The after run had no runner-level runtime error and a performance category score of 1.0, but LCP and INP were still not applicable. The before run is not comparable: trace startup failed. Therefore these results **do not demonstrate a valid Lighthouse improvement**. Do not interpret the browser observations above as Lighthouse audit results or compare the category score as an improvement.
+The final before and after runs both had no runner-level runtime error and a performance category score of 1.0, but LCP and INP were still not applicable. An earlier before attempt failed trace startup with `NO_NAVSTART`; the successful rerun produced the numeric CLS value shown above. Since both LCP and INP are unavailable (and the category score is 1.0 on both builds), these results **do not demonstrate a Lighthouse improvement**. Do not interpret the browser observations above as Lighthouse audit results or compare the category score as an improvement.
 
 Re-run Lighthouse when its CLI and browser pairing are available, against fresh production servers on both revisions, with the same mobile preset and throttling. Save the JSON reports and replace this section with comparable audited LCP, CLS, and INP values. Lighthouse does not always produce an INP lab value for a navigation with no interactions; use a scripted interaction/Timespan or field data as appropriate.
 
