@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
-import AddToCartButton from "./AddToCartButton";
+import DishCard from "./DishCard";
 
 const PAGE_SIZE = 2;
 
@@ -62,15 +61,8 @@ export default function SearchBox({ initialResult, initialSearch, page }) {
 
       {result.dishes.length > 0 ? (
         <ul className="mt-5 grid gap-4 sm:grid-cols-2" aria-live="polite" aria-busy={isLoading}>
-          {result.dishes.map((dish) => (
-            <li className="rounded-lg border border-amber-200 bg-white p-5" key={dish.id}>
-              <h2 className="text-xl font-semibold">
-                <Link href={`/menu/${dish.id}`}>{dish.name}</Link>
-              </h2>
-              <p className="mt-2 text-stone-600">{dish.description}</p>
-              <p className="mt-3 font-medium">{dish.currency} {dish.price.toFixed(2)}</p>
-              <AddToCartButton dishId={dish.id} />
-            </li>
+          {result.dishes.map((dish, index) => (
+            <DishCard dish={dish} key={dish.id} priority={index === 0} />
           ))}
         </ul>
       ) : (

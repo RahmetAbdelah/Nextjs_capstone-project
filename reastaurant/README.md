@@ -7,8 +7,9 @@ A small Ethiopian restaurant app built with Next.js. Browse dishes, add them to 
 In a terminal opened in the `reastaurant` folder:
 
 1. Run `npm install` once.
-2. Run `npm run dev`.
-3. Open [http://localhost:3000](http://localhost:3000).
+2. Copy `.env.example` to `.env.local` and replace the sample credentials and session secret.
+3. Run `npm run dev`.
+4. Open [http://localhost:3000](http://localhost:3000).
 
 For a production check, run `npm run build`, then `npm run start`.
 
@@ -54,6 +55,10 @@ curl -i -X POST http://localhost:3000/api/orders -H 'content-type: application/j
 - `BOUNDARY.md` explains which parts run in the browser and on the server.
 
 The order-status endpoint returns only the order ID, status, and creation time, and only to the owning signed-in account. Orders are in memory, so use a database before real deployment. Run `npm test` for auth redirect safety tests.
+
+## Performance notes
+
+Dish art is served as local WebP through `next/image`, with responsive `sizes` and only the first menu card preloaded. Geist is self-hosted. See [PERF.md](PERF.md) for the production measurement method, results, and Lighthouse runner limitations.
 
 ## Production build output
 

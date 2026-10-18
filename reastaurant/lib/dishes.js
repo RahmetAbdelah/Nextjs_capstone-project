@@ -6,6 +6,8 @@ export const dishes = [
     price: 350,
     currency: "ETB",
     category: "Main",
+    image: "/images/dishes/doro-wat.webp",
+    imageAlt: "Illustration of Doro Wat chicken stew with an egg on injera",
   },
   {
     id: "beyaynetu",
@@ -14,6 +16,8 @@ export const dishes = [
     price: 220,
     currency: "ETB",
     category: "Vegetarian",
+    image: "/images/dishes/beyaynetu.webp",
+    imageAlt: "Illustration of colorful Beyaynetu vegetable stews on injera",
   },
   {
     id: "kitfo",
@@ -22,6 +26,8 @@ export const dishes = [
     price: 400,
     currency: "ETB",
     category: "Main",
+    image: "/images/dishes/kitfo.webp",
+    imageAlt: "Illustration of Kitfo seasoned minced beef with greens",
   },
   {
     id: "shiro-tegabeno",
@@ -30,6 +36,8 @@ export const dishes = [
     price: 180,
     currency: "ETB",
     category: "Main",
+    image: "/images/dishes/shiro-tegabeno.webp",
+    imageAlt: "Illustration of Shiro Tegabeno chickpea stew in a clay pot",
   },
 ];
 
