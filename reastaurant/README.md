@@ -1,44 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Addis Eats
 
-## Getting Started
+A small Ethiopian restaurant app built with Next.js. Browse dishes, add them to a cart, and place an order.
 
-First, run the development server:
+## Run it
+
+In a terminal opened in the `reastaurant` folder:
+
+1. Run `npm install` once.
+2. Run `npm run dev`.
+3. Open [http://localhost:3000](http://localhost:3000).
+
+For a production check, run `npm run build`, then `npm run start`.
+
+## Pages
+
+- `/` — home
+- `/menu` — search, browse and page through dishes
+- `/menu/doro-wot`, `/menu/beyaynetu`, `/menu/kitfo`, `/menu/shiro-tegabeno` — dish details
+- `/cart` — change or remove cart items
+- `/checkout` — place an order
+- `/orders/<order-id>` — follow order status; it refreshes every five seconds
+- `/orders` — view orders owned by the signed-in account
+- `/signin` — sign in and return to an allowed internal destination
+- `/kitchen` — staff-only order queue
+
+Authentication is configured with `SESSION_SECRET`, `CUSTOMER_EMAIL`, `CUSTOMER_PASSWORD`, `STAFF_EMAIL`, and `STAFF_PASSWORD`; optional stable IDs are `CUSTOMER_USER_ID` and `STAFF_USER_ID`. See [AUTH.md](AUTH.md) for setup and the security layers used by protected routes. The session cookie is `secure`, so browser sign-in requires HTTPS.
+
+## API
+
+| Request                                          | Success                     | Error                                |
+| ------------------------------------------------ | --------------------------- | ------------------------------------ |
+| `GET /api/dishes`                                | `200`, first page of dishes | —                                    |
+| `GET /api/dishes?search=kitfo&page=1&pageSize=2` | `200`, matching page        | —                                    |
+| `GET /api/dishes/<id>`                           | `200`, one dish             | `404` if missing                     |
+| `POST /api/orders`                               | `201`, new order            | `400` bad JSON; `422` invalid fields |
+| `GET /api/orders/<id>`                           | `200`, safe status          | `404` if missing                     |
+
+Example curl checks:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+curl -i 'http://localhost:3000/api/dishes?search=kitfo&page=1&pageSize=2'
+curl -i http://localhost:3000/api/orders/not-a-real-order
+curl -i -X POST http://localhost:3000/api/orders -H 'content-type: application/json' --data '{"customerName":"Aster Example","email":"aster@example.com","deliveryAddress":"12 Example Street","orderDetails":"Doro Wat x 1"}'
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Data notes
 
-## Orders API and server actions
+- `lib/fetcher.js` is the shared JSON fetcher.
+- `lib/dishes.js` contains the public menu and paging helper.
+- `lib/order-store.js` stores demo orders in memory; restarting the server clears them.
+- `DATA.md` explains every SWR query key and refresh time.
+- `STRATEGY.md` explains every URL and its rendering strategy.
+- `BOUNDARY.md` explains which parts run in the browser and on the server.
 
-- `GET /api/dishes` lists menu dishes; `GET /api/dishes/:id` returns one dish or a `404` error.
-- `POST /api/orders` validates with the shared Zod schema and returns `422` with top-level `fieldErrors` for invalid input.
-- Checkout submits through a server action. Cancellation requires a verified `restaurant_session` cookie and checks the order owner on the server.
+The order-status endpoint returns only the order ID, status, and creation time, and only to the owning signed-in account. Orders are in memory, so use a database before real deployment. Run `npm test` for auth redirect safety tests.
 
-For authenticated cancellation, set `SESSION_SECRET` on the server and have the authentication provider issue an HttpOnly `restaurant_session` cookie. Its value is a base64url-encoded JSON payload (`userId` and `expiresAt`, in milliseconds) followed by a dot and a base64url HMAC-SHA256 signature of that encoded payload. Never create this cookie from untrusted client input. Orders are currently held in a process-local in-memory store; connect a durable database before deploying or running multiple app instances.
+## Production build output
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+`npm run build` succeeded and reported:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```text
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/dishes
+├ ƒ /api/dishes/[id]
+├ ƒ /api/orders
+├ ƒ /api/orders/[id]
+├ ○ /cart
+├ ○ /checkout
+├ ƒ /menu
+├   /menu/[id]
+│ ├ ● /menu/doro-wot
+│ ├ ● /menu/beyaynetu
+│ ├ ● /menu/kitfo
+│ └ ● /menu/shiro-tegabeno
+└ ƒ /orders/[id]
 
-## Learn More
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The output matches `STRATEGY.md`: known dish details are prebuilt; the menu page reads query parameters; the order-status page needs an order ID at request time.

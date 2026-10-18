@@ -3,6 +3,14 @@ import { getSession } from "@/lib/session";
 import { createOrder } from "@/lib/order-store";
 
 export async function POST(request) {
+  const session = await getSession();
+  if (!session) {
+    return Response.json(
+      { error: { code: "UNAUTHENTICATED", message: "Sign in before placing an order." } },
+      { status: 401 },
+    );
+  }
+
   let body;
 
   try {
@@ -28,8 +36,7 @@ export async function POST(request) {
     );
   }
 
-  const session = await getSession();
-  const order = createOrder(result.data, session?.userId ?? null);
+  const order = createOrder(result.data, session.userId);
 
   return Response.json(
     { order: { id: order.id, status: order.status, createdAt: order.createdAt } },

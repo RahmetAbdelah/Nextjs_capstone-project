@@ -1,6 +1,13 @@
 import CheckoutForm from "./CheckoutForm";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
 
-export default function CheckoutPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CheckoutPage() {
+    const session = await getSession();
+    if (!session) redirect("/signin?next=%2Fcheckout");
+
     return (
         <main className="mx-auto w-full max-w-3xl px-6 py-12">
             <h1 className="text-3xl font-bold">Checkout</h1>

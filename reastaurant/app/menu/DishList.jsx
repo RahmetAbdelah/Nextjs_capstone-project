@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AddToCartButton from "./AddToCartButton";
 
 export default function DishList({ dishes }) {
 	return (
@@ -9,7 +10,8 @@ export default function DishList({ dishes }) {
 						<Link href={`/menu/${dish.id}`}>{dish.name}</Link>
 					</h2>
 					<p className="mt-2 text-gray-600">{dish.description}</p>
-					<p className="mt-3 font-medium">${dish.price.toFixed(2)}</p>
+					<p className="mt-3 font-medium">{dish.currency} {dish.price.toFixed(2)}</p>
+					  <AddToCartButton dishId={dish.id} />
 				</li>
 			))}
 		</ul>

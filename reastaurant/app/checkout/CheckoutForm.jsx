@@ -1,9 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { placeOrder } from "@/app/actions";
 import { OrderSchema } from "@/lib/schema";
+import { dishes } from "@/lib/dishes";
+import { useCart } from "@/app/CartProvider";
 
 const initialState = { status: "idle", fieldErrors: {} };
 
@@ -14,8 +17,28 @@ function FieldError({ errors }) {
 
 export default function CheckoutForm() {
   const [state, formAction, isPending] = useActionState(placeOrder, initialState);
+  const router = useRouter();
   const [clientErrors, setClientErrors] = useState({});
+  const [editedOrderDetails, setEditedOrderDetails] = useState(null);
+  const { items } = useCart();
   const fieldErrors = { ...state.fieldErrors, ...clientErrors };
+  const cartDetails = useMemo(
+    () => items
+      .map((item) => {
+        const dish = dishes.find((menuItem) => menuItem.id === item.dishId);
+        return dish ? `${dish.name} × ${item.quantity}` : null;
+      })
+      .filter(Boolean)
+      .join(", "),
+    [items],
+  );
+  const orderDetails = editedOrderDetails ?? cartDetails;
+
+  useEffect(() => {
+    if (state.status === "success" && state.orderId) {
+      router.push(`/orders/${state.orderId}`);
+    }
+  }, [router, state.orderId, state.status]);
 
   function validateBeforeSubmit(event) {
     const result = OrderSchema.safeParse(Object.fromEntries(new FormData(event.currentTarget)));
@@ -81,7 +104,9 @@ export default function CheckoutForm() {
           id="orderDetails"
           name="orderDetails"
           placeholder="For example: Doro Wot × 2, Kitfo × 1"
+          onChange={(event) => setEditedOrderDetails(event.target.value)}
           rows={3}
+          value={orderDetails}
           required
           aria-invalid={Boolean(fieldErrors.orderDetails?.length)}
           aria-describedby="orderDetails-error"
@@ -94,7 +119,6 @@ export default function CheckoutForm() {
           {state.message}{state.orderId ? ` Order reference: ${state.orderId}` : ""}
         </p>
       )}
-
       <button
         className="rounded bg-black px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
         type="submit"
