@@ -38,7 +38,12 @@ export default async function RootLayout({ children }) {
               {session ? (
                 <>
                   <Link href="/orders">Your orders</Link>
-                  {session.role === "staff" && <Link href="/kitchen">Kitchen</Link>}
+                  {session.role === "staff" && (
+                    <>
+                      <Link href="/kitchen">Kitchen</Link>
+                      <Link href="/dashboard">Dashboard</Link>
+                    </>
+                  )}
                   <form action={signOut}>
                     <button type="submit">Sign out</button>
                   </form>

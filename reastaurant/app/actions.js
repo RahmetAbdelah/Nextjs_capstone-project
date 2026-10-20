@@ -70,6 +70,8 @@ export async function placeOrder(_previousState, formData) {
 
   revalidatePath("/checkout");
   revalidatePath("/cart");
+  revalidatePath("/orders");
+  revalidatePath("/dashboard");
 
   return {
     status: "success",
@@ -98,6 +100,8 @@ export async function cancelOrder(orderId, _previousState, _formData) {
   }
   revalidatePath("/checkout");
   revalidatePath("/cart");
+  revalidatePath("/orders");
+  revalidatePath("/dashboard");
 
   return { status: "success", message: "Your order has been cancelled." };
 }
