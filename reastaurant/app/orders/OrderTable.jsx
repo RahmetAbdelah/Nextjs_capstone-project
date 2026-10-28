@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getOrderRevenue } from "@/lib/order-analytics";
+import { etb, when } from "@/lib/format";
 
 const PAGE_SIZE = 10;
 const SORT_FIELDS = new Set(["createdAt", "customerName", "neighbourhood", "status", "revenue"]);
@@ -80,9 +81,9 @@ export default async function OrderTable({ orders, searchParams }) {
                     <th className="px-4 py-3 font-mono font-medium" scope="row">{order.id.slice(0, 8)}</th>
                     <td className="px-4 py-3">{order.customerName}</td>
                     <td className="px-4 py-3">{order.neighbourhood || "Unspecified"}</td>
-                    <td className="px-4 py-3">ETB {getOrderRevenue(order.orderDetails).toLocaleString()}</td>
+                    <td className="px-4 py-3">{etb(getOrderRevenue(order.orderDetails))}</td>
                     <td className="px-4 py-3">{order.status}</td>
-                    <td className="px-4 py-3">{new Date(order.createdAt).toLocaleString()}</td>
+                    <td className="px-4 py-3">{when(order.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>

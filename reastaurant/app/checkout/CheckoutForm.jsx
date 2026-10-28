@@ -36,7 +36,7 @@ export default function CheckoutForm() {
 
   useEffect(() => {
     if (state.status === "success" && state.orderId) {
-      router.push(`/orders/${state.orderId}`);
+      router.push(`/track/${state.orderId}`);
     }
   }, [router, state.orderId, state.status]);
 

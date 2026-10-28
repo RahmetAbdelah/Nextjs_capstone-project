@@ -5,6 +5,7 @@ import { getAllOrders } from "@/lib/order-store";
 import { getSession } from "@/lib/session";
 import OrderTable from "./OrderTable";
 import { OrderTableSkeleton } from "./loading";
+import ExportOrdersButton from "./ExportOrdersButton";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,7 @@ export default async function OrdersPage({ searchParams }) {
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-12">
       <h1 className="text-3xl font-bold">{session.role === "staff" ? "All orders" : "Your orders"}</h1>
+      <ExportOrdersButton orders={orders} />
       {session.role === "staff" && (
         <nav aria-label="Order state previews" className="mt-4 flex flex-wrap gap-3 text-sm">
           <span className="text-stone-600">Preview a state:</span>

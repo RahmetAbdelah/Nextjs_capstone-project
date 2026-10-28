@@ -26,6 +26,9 @@ export default async function OrderPage({ params }) {
       <h1 className="text-3xl font-bold">Order status</h1>
       <p className="mt-2 text-stone-600">Your order was received. You can keep this page open for updates.</p>
       <OrderStatus orderId={id} initialOrder={initialOrder} />
+      <Link className="mt-4 inline-block font-medium underline" href={`/track/${encodeURIComponent(id)}`}>
+        Track delivery on a map
+      </Link>
       <Link className="mt-6 inline-block font-medium underline" href="/menu">
         Back to the menu
       </Link>
