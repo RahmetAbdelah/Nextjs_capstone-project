@@ -1,6 +1,6 @@
 import { getPagedDishes } from "@/lib/dishes";
 
-const PAGE_SIZE = 2;
+const PAGE_SIZE =3;
 
 export async function GET(request) {
   const searchParams = new URL(request.url).searchParams;

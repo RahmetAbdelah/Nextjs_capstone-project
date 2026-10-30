@@ -14,11 +14,11 @@ export default function OrderStatus({ orderId, initialOrder }) {
   const order = data.order;
 
   return (
-    <section className="mt-6 rounded-lg border border-amber-200 bg-white p-5" aria-live="polite">
+    <section className="tracking-card status-panel" aria-live="polite">
       <p className="text-sm text-stone-600">Order reference</p>
       <p className="break-all font-mono text-sm">{order.id}</p>
       <p className="mt-4 text-sm text-stone-600">Status</p>
-      <p className="mt-1 text-2xl font-bold">{order.status}</p>
+      <p className="mt-1 text-2xl font-bold text-stone-900">{order.status}</p>
       <p className="mt-3 text-sm text-stone-600">
         We check for updates every five seconds. This page updates automatically.
       </p>

@@ -1,0 +1,45 @@
+:root {
+  --background: #faf7f1;
+  --surface: #fffefa;
+  --foreground: #29231f;
+  --muted: #71665e;
+  --accent: #87412c;
+  --accent-dark: #683020;
+  --gold: #c29244;
+  --border: #e9dfd2;
+  --soft-accent: #f3e7d8;
+  --shadow: 0 18px 50px rgb(61 43 29 / 8%);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3 {
+  color: var(--foreground);
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: -0.035em;
+}
+
+::selection {
+  background: #e9d1ad;
+  color: var(--foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

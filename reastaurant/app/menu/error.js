@@ -2,11 +2,11 @@
 
 export default function MenuError({ reset }) {
    return (
-      <main className="mx-auto w-full max-w-3xl px-6 py-12" role="alert">
-         <h1 className="text-2xl font-bold">We could not load the menu.</h1>
+      <main className="page-shell" role="alert">
+         <h1 className="page-heading">We could not load the menu.</h1>
          <p className="mt-2 text-stone-600">Please try again.</p>
          <button
-            className="mt-5 rounded bg-amber-800 px-4 py-2 font-semibold text-white"
+            className="button-primary mt-5"
             onClick={() => reset()}
             type="button"
          >

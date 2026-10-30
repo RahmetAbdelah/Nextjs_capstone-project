@@ -1,88 +1,40 @@
+
 # Addis Eats route plan
 
-This file is the simple map for the Addis Eats Next.js app. A **route** is a URL. A **rendering strategy** says when and where Next.js makes that page or response.
+A route is a URL. Its rendering strategy describes when and where Next.js makes the page or response. See [PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md) for the folder map.
 
-## Folder tree
+| URL | Purpose | Rendering |
+| --- | --- | --- |
+| `/` | Home page | Static |
+| `/menu` | Search and page through dishes | Dynamic server page with client search |
+| `/menu/[id]` | Show a dish | Prebuilt page for known dishes |
+| `/cart` | Edit cart items | Static page with a client component |
+| `/checkout` | Place an order | Static form with a server action |
+| `/signin` | Sign in | Dynamic server page |
+| `/signup` | Create a customer account | Dynamic server page |
+| `/orders` | List a user's orders | Dynamic server page |
+| `/orders/[id]` | Show an order's status | Dynamic server page with client polling |
+| `/track/[id]` | Track a delivery | Dynamic server page with live updates |
+| `/kitchen` | Show the staff order queue | Dynamic server page |
+| `/dashboard` | Show staff reports | Dynamic server page |
+| `/api/dishes` | Search and page through dishes | Dynamic route handler |
+| `/api/dishes/[id]` | Return one dish | Dynamic route handler |
+| `/api/orders` | Validate and create an order | Dynamic route handler |
+| `/api/orders/[id]` | Return safe order status | Dynamic route handler |
+| `/api/orders/[id]/stream` | Stream delivery updates | Dynamic route handler |
+| `/_not-found` | Handle unknown pages | Static special page |
 
-```text
-reastaurant/
-├── app/
-│   ├── actions.js                 # Server actions: place and cancel orders
-│   ├── CartProvider.jsx           # Browser cart state, saved in local storage
-│   ├── api/
-│   │   ├── dishes/route.js        # GET /api/dishes
-│   │   ├── dishes/[id]/route.js   # GET /api/dishes/:id
-│   │   └── orders/
-│   │       ├── [id]/route.js      # GET /api/orders/:id
-│   │       └── route.js           # POST /api/orders
-│   ├── cart/
-│   │   ├── CartContents.jsx       # Interactive cart list
-│   │   └── page.js                # /cart
-│   ├── checkout/
-│   │   ├── CancelOrderForm.jsx    # Owner-checked cancel action form
-│   │   ├── CheckoutForm.jsx       # Interactive checkout form
-│   │   └── page.js                # /checkout
-│   ├── menu/
-│   │   ├── [id]/page.jsx          # /menu/:id
-│   │   ├── AddToCartButton.jsx    # Interactive add button
-│   │   ├── CategoryBar.jsx        # Menu category navigation
-│   │   ├── DishList.jsx           # Menu list component
-│   │   ├── SearchBox.jsx          # Debounced search and paging
-│   │   ├── error.js                # Menu error boundary
-│   │   ├── loading.js              # Menu loading screen
-│   │   └── page.js                # /menu
-│   ├── orders/[id]/
-│   │   ├── OrderStatus.jsx        # Polls status with SWR
-│   │   └── page.js                # /orders/:id
-│   ├── orders/[id]/
-│   │   ├── OrderStatus.jsx        # Polls status with SWR
-│   │   └── page.js                 # /orders/:id
-│   ├── globals.css                # App-wide styles
-│   ├── layout.js                  # Shared page frame
-│   ├── not-found.js               # Friendly not-found page
-│   └── page.js                    # /
-├── lib/
-│   ├── dishes.js                  # Shared dish data
-│   ├── fetcher.js                 # Shared SWR fetcher
-│   ├── order-store.js              # Order storage (currently memory only)
-│   ├── schema.js                  # Shared order validation rules
-│   └── session.js                 # Signed-session verification
-├── public/                        # Static images and icons
-├── BOUNDARY.md                    # Which code runs in browser or on server
-├── DATA.md                        # SWR keys and refresh choices
-├── README.md                      # How to run and test the app
-└── STRATEGY.md                    # This route plan
-```
+## Build checks
 
-## Route strategy
+1. Check the shared layout and routes with `npm run build`.
+2. Check menu, detail, loading, error, and not-found pages.
+3. Check cart and checkout behavior.
+4. Check validation, API routes, and protected actions.
+5. Run `npm test` and build once more before release.
 
-| URL                | What it does                              | Strategy                                   | Why this is a good fit                                                                                                        |
-| ------------------ | ----------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| `/`                | Shows the home page and links             | Static page                                | The content does not need private data or a database lookup.                                                                  |
-| `/menu`            | Searches and pages through dishes         | Dynamic server page with client SWR search | Page and optional search are in the URL; initial results are rendered on the server.                                          |
-| `/menu/[id]`       | Shows one dish                            | Static page for each known dish ID         | `generateStaticParams()` builds known dishes ahead of time, and `dynamicParams = false` makes unknown IDs real 404 responses. |
-| `/cart`            | Shows the cart and quantity controls      | Static page with a client component        | The page shell can be built early; the cart reads browser storage after it loads.                                             |
-| `/checkout`        | Shows the checkout form                   | Static page plus server action             | The form shell can be rendered ahead of time; submitting the form runs trusted server code.                                   |
-| `/orders/[id]`     | Shows one order's status                  | Dynamic server page plus polling client    | The server loads the first status, then the browser checks again every five seconds.                                          |
-| `/api/dishes`      | Returns a searched page of dishes as JSON | Dynamic Route Handler                      | Search and page values come from the request URL.                                                                             |
-| `/api/dishes/[id]` | Returns one dish or a 404                 | Dynamic Route Handler                      | The ID is only known when the request arrives.                                                                                |
-| `/api/orders`      | Checks an order and creates it            | Dynamic Route Handler                      | It reads a POST body, validates it, and returns the matching HTTP status.                                                     |
-| `/api/orders/[id]` | Returns safe status details for one order | Dynamic Route Handler                      | SWR calls it to refresh status without exposing customer details.                                                             |
-| `/_not-found`      | Shows the not-found page                  | Static special page                        | The same helpful fallback can be reused for unknown pages.                                                                    |
+Run each command from the `reastaurant` folder and fix errors before continuing.
 
-## Build order (six small steps)
+## Current limits
 
-1. Write this route plan and `BOUNDARY.md` before changing app code.
-2. Confirm the shared layout and every page URL; build.
-3. Finish menu navigation, dish details, and not-found/loading/error feedback; build.
-4. Finish the cart-to-checkout experience; build.
-5. Verify the schema, API routes, and protected server actions; build.
-6. Update the README, test the production server and failure cases, then build once more.
-
-The six steps are checkpoints, not six separate apps. After each code step, run `npm run build` from this folder and fix any errors before continuing.
-
-## Current limits to remember
-
-- Orders are stored in memory. They disappear when the server restarts and are not shared across server instances.
-- There is no sign-in screen/provider in this repository. Cancelling an order works only when a trusted authentication provider supplies a valid signed session cookie.
-- The workspace currently contains Addis Eats only. The separate capstone source project was not provided, so it cannot be migrated or truthfully documented yet.
+- Orders are stored in memory and disappear when the server restarts.
+- A database is needed before deploying for real orders.

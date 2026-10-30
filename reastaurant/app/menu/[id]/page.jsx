@@ -16,22 +16,24 @@ export default async function DishPage({ params }) {
     if (!dish) notFound();
 
     return (
-        <main className="mx-auto w-full max-w-3xl px-6 py-12">
-            <h1 className="text-3xl font-bold">{dish.name}</h1>
-            <Image
-                alt={dish.imageAlt}
-                className="mt-6 aspect-[4/3] w-full max-w-2xl rounded-lg object-cover"
-                height={600}
-                sizes="(max-width: 767px) calc(100vw - 3rem), 672px"
-                src={dish.image}
-                width={800}
-            />
-            <p className="mt-4 text-gray-600">{dish.description}</p>
-            <p className="mt-4 font-medium">{dish.currency} {dish.price.toFixed(2)}</p>
-            <AddToCartButton dishId={dish.id} />
-            <Link className="mt-6 inline-block font-medium underline" href="/menu">
-                Back to all dishes
-            </Link>
+        <main className="page-shell">
+            <section className="detail-layout">
+                <Image
+                    alt={dish.imageAlt}
+                    className="detail-image"
+                    height={600}
+                    sizes="(max-width: 767px) 90vw, 45vw"
+                    src={dish.image}
+                    width={800}
+                />
+                <div>
+                    <h1 className="page-heading">{dish.name}</h1>
+                    <p className="page-description">{dish.description}</p>
+                    <p className="detail-price">{dish.currency} {dish.price.toFixed(2)}</p>
+                    <AddToCartButton dishId={dish.id} />
+                    <Link className="detail-back-link" href="/menu">Back to all dishes</Link>
+                </div>
+            </section>
         </main>
     );
 }

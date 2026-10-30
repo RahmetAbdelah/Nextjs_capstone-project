@@ -1,8 +1,8 @@
 import localFont from "next/font/local";
-import Link from "next/link";
-import { signOut } from "@/app/actions";
 import { getSession } from "@/lib/session";
 import { CartProvider } from "./CartProvider";
+import SiteFooter from "./SiteFooter";
+import SiteHeader from "./SiteHeader";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -13,8 +13,14 @@ const geistSans = localFont({
 });
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "Addis Eats | Ethiopian Restaurant",
   description: "Order traditional Ethiopian dishes from Addis Eats.",
+  openGraph: {
+    title: "Addis Eats | Ethiopian Restaurant",
+    description: "Discover comforting Ethiopian favourites, prepared with warm spices and shared with care.",
+    type: "website",
+  },
 };
 
 export default async function RootLayout({ children }) {
@@ -24,42 +30,12 @@ export default async function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-amber-50 text-stone-900">
-        <header className="border-b border-amber-200 bg-white">
-          <nav
-            aria-label="Main navigation"
-            className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4"
-          >
-            <Link className="text-xl font-bold text-amber-900" href="/">Addis Eats</Link>
-            <div className="flex flex-wrap gap-4 text-sm font-medium">
-              <Link href="/menu">Menu</Link>
-              <Link href="/cart">Cart</Link>
-              <Link href="/checkout">Checkout</Link>
-              {session ? (
-                <>
-                  <Link href="/orders">Your orders</Link>
-                  {session.role === "staff" && (
-                    <>
-                      <Link href="/kitchen">Kitchen</Link>
-                      <Link href="/dashboard">Dashboard</Link>
-                    </>
-                  )}
-                  <form action={signOut}>
-                    <button type="submit">Sign out</button>
-                  </form>
-                </>
-              ) : (
-                <Link href="/signin">Sign in</Link>
-              )}
-            </div>
-          </nav>
-        </header>
+      <body className="site-body flex min-h-full flex-col">
+        <SiteHeader session={session} />
         <CartProvider>
-          <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+          <div className="site-content flex min-h-0 flex-1 flex-col">{children}</div>
         </CartProvider>
-        <footer className="border-t border-amber-200 bg-white px-6 py-5 text-center text-sm text-stone-600">
-          Addis Eats · Ethiopian food, made with care.
-        </footer>
+        <SiteFooter />
       </body>
     </html>
   );

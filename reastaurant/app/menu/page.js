@@ -8,8 +8,8 @@ export default async function MenuPage({ searchParams }) {
 	const result = getPagedDishes({ search, page: params.page, pageSize: 2 });
 
 	return (
-		<main className="mx-auto w-full max-w-5xl px-6 py-12">
-			<h1 className="text-3xl font-bold">Our menu</h1>
+		<main className="page-shell">
+			<h1 className="page-heading">Our menu</h1>
 			<CategoryBar />
 			<SearchBox initialResult={result} initialSearch={search} page={result.page} />
 		</main>

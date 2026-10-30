@@ -10,10 +10,10 @@ const categories = [
 
 export default function CategoryBar() {
     return (
-        <nav aria-label="Menu categories" className="mt-5 flex flex-wrap gap-3">
+        <nav aria-label="Menu categories" className="category-bar">
             {categories.map((category) => (
                 <Link
-                    className="rounded-full border border-amber-800 px-4 py-2 text-sm font-medium text-amber-900 hover:bg-amber-100"
+                    className="category-link"
                     href={category.href}
                     key={category.href}
                 >

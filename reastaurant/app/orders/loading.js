@@ -1,8 +1,8 @@
 export function OrderTableSkeleton() {
   return (
-    <div aria-label="Loading orders" aria-busy="true" className="mt-6 overflow-x-auto rounded-lg border border-amber-200 bg-white">
-      <table className="w-full border-collapse text-left">
-        <thead className="bg-amber-100">
+    <div aria-label="Loading orders" aria-busy="true" className="data-table-wrap">
+      <table className="data-table">
+        <thead>
           <tr>
             {["Order", "Customer", "Neighbourhood", "Est. revenue", "Status", "Order date"].map((heading) => (
               <th className="px-4 py-3" key={heading} scope="col">{heading}</th>
@@ -28,8 +28,9 @@ export function OrderTableSkeleton() {
 
 export default function Loading() {
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-12">
-      <h1 className="text-3xl font-bold">Orders</h1>
+    <main className="page-shell">
+      <p className="section-eyebrow">Your Addis Eats</p>
+      <h1 className="page-heading">Orders</h1>
       <OrderTableSkeleton />
     </main>
   );

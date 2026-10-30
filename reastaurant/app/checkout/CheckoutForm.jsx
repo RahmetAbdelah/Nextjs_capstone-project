@@ -1,141 +1,68 @@
 "use client";
 
-import { useActionState } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { placeOrder } from "@/app/actions";
 import { OrderSchema } from "@/lib/schema";
 import { dishes } from "@/lib/dishes";
 import { useCart } from "@/app/CartProvider";
+import CustomerDetailsFields from "./CustomerDetailsFields";
+import OrderDetailsField from "./OrderDetailsField";
+import CheckoutMessage from "./CheckoutMessage";
 
 const initialState = { status: "idle", fieldErrors: {} };
 
-function FieldError({ errors }) {
-  if (!errors?.length) return null;
-  return <p className="mt-1 text-sm text-red-700">{errors[0]}</p>;
-}
-
-export default function CheckoutForm() {
+export default function CheckoutForm({ submissionId }) {
   const [state, formAction, isPending] = useActionState(placeOrder, initialState);
   const router = useRouter();
+  const submissionStarted = useRef(false);
   const [clientErrors, setClientErrors] = useState({});
   const [editedOrderDetails, setEditedOrderDetails] = useState(null);
   const { items } = useCart();
   const fieldErrors = { ...state.fieldErrors, ...clientErrors };
-  const cartDetails = useMemo(
-    () => items
-      .map((item) => {
-        const dish = dishes.find((menuItem) => menuItem.id === item.dishId);
-        return dish ? `${dish.name} × ${item.quantity}` : null;
-      })
-      .filter(Boolean)
-      .join(", "),
-    [items],
-  );
+  const cartDetails = useMemo(() => items.map((item) => {
+    const dish = dishes.find((menuItem) => menuItem.id === item.dishId);
+    return dish ? `${dish.name} × ${item.quantity}` : null;
+  }).filter(Boolean).join(", "), [items]);
   const orderDetails = editedOrderDetails ?? cartDetails;
 
   useEffect(() => {
     if (state.status === "success" && state.orderId) {
       router.push(`/track/${state.orderId}`);
+    } else if (state.status === "error" && !isPending) {
+      submissionStarted.current = false;
     }
-  }, [router, state.orderId, state.status]);
+  }, [isPending, router, state.orderId, state.status]);
 
   function validateBeforeSubmit(event) {
-    const result = OrderSchema.safeParse(Object.fromEntries(new FormData(event.currentTarget)));
+    if (submissionStarted.current) {
+      event.preventDefault();
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+    const result = OrderSchema.safeParse(Object.fromEntries(formData));
     if (!result.success) {
       event.preventDefault();
       setClientErrors(result.error.flatten().fieldErrors);
       return;
     }
-
+    submissionStarted.current = true;
     setClientErrors({});
   }
 
   return (
-    <form action={formAction} onSubmit={validateBeforeSubmit} className="mt-8 grid max-w-xl gap-5">
-      <div>
-        <label className="block font-medium" htmlFor="customerName">Name</label>
-        <input
-          className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
-          id="customerName"
-          name="customerName"
-          autoComplete="name"
-          required
-          aria-invalid={Boolean(fieldErrors.customerName?.length)}
-          aria-describedby="customerName-error"
-        />
-        <div id="customerName-error"><FieldError errors={fieldErrors.customerName} /></div>
-      </div>
-
-      <div>
-        <label className="block font-medium" htmlFor="email">Email</label>
-        <input
-          className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          aria-invalid={Boolean(fieldErrors.email?.length)}
-          aria-describedby="email-error"
-        />
-        <div id="email-error"><FieldError errors={fieldErrors.email} /></div>
-      </div>
-
-      <div>
-        <label className="block font-medium" htmlFor="deliveryAddress">Delivery address</label>
-        <textarea
-          className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
-          id="deliveryAddress"
-          name="deliveryAddress"
-          autoComplete="street-address"
-          rows={3}
-          required
-          aria-invalid={Boolean(fieldErrors.deliveryAddress?.length)}
-          aria-describedby="deliveryAddress-error"
-        />
-        <div id="deliveryAddress-error"><FieldError errors={fieldErrors.deliveryAddress} /></div>
-      </div>
-
-      <div>
-        <label className="block font-medium" htmlFor="neighbourhood">Neighbourhood</label>
-        <input
-          className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
-          id="neighbourhood"
-          name="neighbourhood"
-          autoComplete="address-level3"
-          placeholder="For example: Bole"
-          required
-          aria-invalid={Boolean(fieldErrors.neighbourhood?.length)}
-          aria-describedby="neighbourhood-error"
-        />
-        <div id="neighbourhood-error"><FieldError errors={fieldErrors.neighbourhood} /></div>
-      </div>
-
-      <div>
-        <label className="block font-medium" htmlFor="orderDetails">Order details</label>
-        <textarea
-          className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
-          id="orderDetails"
-          name="orderDetails"
-          placeholder="For example: Doro Wot × 2, Kitfo × 1"
-          onChange={(event) => setEditedOrderDetails(event.target.value)}
-          rows={3}
-          value={orderDetails}
-          required
-          aria-invalid={Boolean(fieldErrors.orderDetails?.length)}
-          aria-describedby="orderDetails-error"
-        />
-        <div id="orderDetails-error"><FieldError errors={fieldErrors.orderDetails} /></div>
-      </div>
-
-      {state.message && (
-        <p aria-live="polite" className={state.status === "success" ? "text-green-800" : "text-red-700"}>
-          {state.message}{state.orderId ? ` Order reference: ${state.orderId}` : ""}
-        </p>
-      )}
+    <form action={formAction} onSubmit={validateBeforeSubmit} className="checkout-form">
+      <input name="submissionId" type="hidden" value={submissionId} />
+      <CustomerDetailsFields fieldErrors={fieldErrors} />
+      <OrderDetailsField
+        errors={fieldErrors.orderDetails}
+        onChange={setEditedOrderDetails}
+        value={orderDetails}
+      />
+      <CheckoutMessage state={state} />
       <button
-        className="rounded bg-black px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+        className="button-primary w-full disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         type="submit"
         disabled={isPending}
       >

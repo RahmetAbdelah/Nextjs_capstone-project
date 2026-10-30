@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 const SESSION_COOKIE = "restaurant_session";
 
-export function middleware(request) {
+export function proxy(request) {
   if (request.cookies.get(SESSION_COOKIE)?.value) return NextResponse.next();
 
   const signInUrl = new URL("/signin", request.url);
@@ -11,5 +11,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/checkout/:path*", "/orders/:path*"],
+  matcher: ["/checkout/:path*", "/orders/:path*", "/track/:path*"],
 };

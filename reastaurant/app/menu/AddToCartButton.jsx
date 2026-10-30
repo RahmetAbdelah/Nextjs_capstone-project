@@ -7,7 +7,7 @@ export default function AddToCartButton({ dishId }) {
 
   return (
     <button
-      className="mt-4 rounded bg-amber-800 px-4 py-2 font-semibold text-white disabled:opacity-60"
+      className="button-primary mt-5 disabled:cursor-not-allowed disabled:opacity-60"
       disabled={!isReady}
       onClick={() => addItem(dishId)}
       type="button"

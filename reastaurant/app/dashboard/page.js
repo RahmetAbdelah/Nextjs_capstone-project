@@ -47,24 +47,24 @@ export default async function DashboardPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-12">
-      <p className="text-sm font-semibold uppercase tracking-wide text-amber-800">Staff overview</p>
-      <h1 className="mt-2 text-3xl font-bold">Restaurant dashboard</h1>
-      <p className="mt-2 text-stone-600">A quick look at menu-price revenue and recent orders.</p>
+    <main className="page-shell">
+      <p className="section-eyebrow">Staff overview</p>
+      <h1 className="page-heading">Restaurant dashboard</h1>
+      <p className="page-description">A quick look at menu-price revenue and recent orders.</p>
 
       <section aria-label="Order summary" className="mt-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-amber-200 bg-white p-5">
+        <div className="data-card">
           <h2 className="text-sm font-medium text-stone-600">Estimated revenue</h2>
           <p className="mt-2 text-2xl font-bold">ETB {chartSummary.totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="rounded-xl border border-amber-200 bg-white p-5">
+        <div className="data-card">
           <h2 className="text-sm font-medium text-stone-600">Orders in the last 14 days</h2>
           <p className="mt-2 text-2xl font-bold">{chartSummary.orderCount}</p>
         </div>
       </section>
 
       <RevenueChart summary={chartSummary} />
-      <p className="mt-6 text-sm text-stone-600">
+      <p className="mt-6 max-w-2xl text-sm leading-7 text-stone-600">
         Revenue is estimated from recognized menu items at current menu prices. Cancelled orders are not counted.
       </p>
     </main>

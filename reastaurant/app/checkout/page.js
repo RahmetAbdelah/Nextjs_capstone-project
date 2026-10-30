@@ -9,10 +9,12 @@ export default async function CheckoutPage() {
     if (!session) redirect("/signin?next=%2Fcheckout");
 
     return (
-        <main className="mx-auto w-full max-w-3xl px-6 py-12">
-            <h1 className="text-3xl font-bold">Checkout</h1>
-            <p className="mt-2 text-gray-600">Enter your details and the dishes you would like to order.</p>
-            <CheckoutForm />
+        <main className="page-shell">
+            <h1 className="page-heading">Checkout</h1>
+            <p className="page-description">Enter your details and the dishes you would like to order.</p>
+            <section className="checkout-panel surface-card">
+                <CheckoutForm submissionId={crypto.randomUUID()} />
+            </section>
         </main>
     );
 }

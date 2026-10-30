@@ -23,16 +23,18 @@ export default async function OrdersPage({ searchParams }) {
       : getOrdersByOwner(session.userId);
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-bold">{session.role === "staff" ? "All orders" : "Your orders"}</h1>
-      <ExportOrdersButton orders={orders} />
+    <main className="page-shell">
+      <h1 className="page-heading">{session.role === "staff" ? "All orders" : "Your orders"}</h1>
+      <div className="orders-toolbar">
+        <ExportOrdersButton orders={orders} />
+      </div>
       {session.role === "staff" && (
         <nav aria-label="Order state previews" className="mt-4 flex flex-wrap gap-3 text-sm">
           <span className="text-stone-600">Preview a state:</span>
-          <Link className="underline" href="/orders?demo=loading">Loading</Link>
-          <Link className="underline" href="/orders?demo=empty">Empty</Link>
-          <Link className="underline" href="/orders?demo=error">Error</Link>
-          <Link className="underline" href="/orders">Normal table</Link>
+          <Link className="text-amber-900 underline" href="/orders?demo=loading">Loading</Link>
+          <Link className="text-amber-900 underline" href="/orders?demo=empty">Empty</Link>
+          <Link className="text-amber-900 underline" href="/orders?demo=error">Error</Link>
+          <Link className="text-amber-900 underline" href="/orders">Normal table</Link>
         </nav>
       )}
       {demo === "loading" ? <OrderTableSkeleton /> : <OrderTable orders={orders} searchParams={searchParams} />}

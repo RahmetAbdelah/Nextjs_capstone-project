@@ -22,14 +22,14 @@ export default async function OrderPage({ params }) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-12">
-      <h1 className="text-3xl font-bold">Order status</h1>
+    <main className="page-shell">
+      <h1 className="page-heading">Order status</h1>
       <p className="mt-2 text-stone-600">Your order was received. You can keep this page open for updates.</p>
       <OrderStatus orderId={id} initialOrder={initialOrder} />
-      <Link className="mt-4 inline-block font-medium underline" href={`/track/${encodeURIComponent(id)}`}>
+      <Link className="detail-back-link mt-5 inline-block" href={`/track/${encodeURIComponent(id)}`}>
         Track delivery on a map
       </Link>
-      <Link className="mt-6 inline-block font-medium underline" href="/menu">
+      <Link className="detail-back-link mt-5 block" href="/menu">
         Back to the menu
       </Link>
     </main>
