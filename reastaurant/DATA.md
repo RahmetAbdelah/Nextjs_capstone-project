@@ -1,0 +1,19 @@
+# Data requests (simple guide)
+
+SWR is the small library that keeps browser data fresh. A **key** is the request address SWR uses to identify and cache one result. `null` means “do not request anything.”
+
+SWR does not have a `staleTime` option like some other data libraries. In this app, `dedupingInterval` is documented instead: it stops identical requests from being repeated too quickly. Polling is controlled separately with `refreshInterval`.
+
+| Screen                | Exact SWR key                                                                                                 | First display                                                                                                                                           | Refresh rule                                                                                                          | Freshness / why                                                                                                                                                                                                                                                                   |
+| --------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dish search and pages | `null` when the trimmed search is empty; otherwise `/api/dishes?search=<encoded-term>&page=<page>&pageSize=2` | The server renders the requested page and passes it as `fallbackData`.                                                                                  | No timer; `revalidateOnFocus: false`. New typing waits 300 ms, then the key changes and SWR requests matching dishes. | `dedupingInterval: 2000` ms; no `staleTime` option. Two seconds avoids repeating identical keystroke/page requests, while `keepPreviousData: true` keeps the old list visible until the new list arrives. Empty search uses the server-rendered page and makes no search request. |
+| Order status          | `/api/orders/<encoded-order-id>`                                                                              | The server reads the order first and passes its safe status data as `fallbackData`; the page can show the status immediately without a loading spinner. | Poll every `5000` ms; also refresh when the tab gets focus.                                                           | `dedupingInterval: 1000` ms; no `staleTime` option. Order status can change, so check it often; one second prevents duplicate requests while a check is in progress.                                                                                                              |
+
+## Why the keys include these values
+
+- Search text belongs in the menu key so a different search gets different cached results.
+- Page number and page size belong in that key so each page has its own results.
+- The order ID belongs in the status key so each customer watches only their own order link.
+- No search text means a `null` key: do not send an empty search request.
+
+Order links use random IDs and the status API returns only the ID, status, and creation time—not customer name, email, phone, or address. Orders are stored only in memory in this learning project, so they are lost if the server restarts.
