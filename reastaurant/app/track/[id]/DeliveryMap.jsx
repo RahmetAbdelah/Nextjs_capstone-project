@@ -1,7 +1,22 @@
 "use client";
 
 import { useEffect } from "react";
-import { CircleMarker, MapContainer, TileLayer, Tooltip, useMap } from "react-leaflet";
+import { divIcon } from "leaflet";
+import { MapContainer, Marker, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
+
+const courierIcon = divIcon({
+  className: "",
+  html: '<span aria-hidden="true" style="display:grid;width:36px;height:36px;place-items:center;border:3px solid white;border-radius:50%;background:#2563eb;box-shadow:0 2px 8px #0006;color:white;font-size:13px;font-weight:800">C</span>',
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+});
+
+const deliveryIcon = divIcon({
+  className: "",
+  html: '<span aria-hidden="true" style="display:grid;width:36px;height:36px;place-items:center;border:3px solid white;border-radius:50%;background:#b45309;box-shadow:0 2px 8px #0006;color:white;font-size:13px;font-weight:800">D</span>',
+  iconSize: [36, 36],
+  iconAnchor: [18, 18],
+});
 
 function FitLocations({ locations }) {
   const map = useMap();
@@ -28,12 +43,32 @@ export default function DeliveryMap({ courier, destination, deliveryAddress }) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <FitLocations locations={locations} />
-      <CircleMarker center={courier} pathOptions={{ color: "#1d4ed8", fillColor: "#3b82f6", fillOpacity: 1 }} radius={9}>
-        <Tooltip permanent>Courier</Tooltip>
-      </CircleMarker>
-      <CircleMarker center={destination} pathOptions={{ color: "#9a3412", fillColor: "#f97316", fillOpacity: 1 }} radius={9}>
-        <Tooltip permanent>Delivery address</Tooltip>
-      </CircleMarker>
+      <Marker
+        alt="Courier, approximate location"
+        icon={courierIcon}
+        keyboard
+        position={courier}
+        title="Courier, approximate location"
+      >
+        <Tooltip permanent>Courier · approximate</Tooltip>
+        <Popup>Courier location is approximate, not live GPS.</Popup>
+      </Marker>
+      <Marker
+        alt="Delivery address area, approximate neighbourhood location"
+        icon={deliveryIcon}
+        keyboard
+        position={destination}
+        title="Delivery address area, approximate neighbourhood location"
+      >
+        <Tooltip permanent>Delivery area</Tooltip>
+        <Popup>
+          <strong>Delivery address</strong>
+          <br />
+          {deliveryAddress}
+          <br />
+          <small>Map pin indicates the approximate neighbourhood, not the exact address.</small>
+        </Popup>
+      </Marker>
     </MapContainer>
   );
 }
